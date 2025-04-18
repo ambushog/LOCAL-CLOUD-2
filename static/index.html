@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Cloud Storage</title>
+    <style>
+/* Modern Professional UI Styles for Local Cloud Storage */
+
+:root {
+  /* Light theme variables */
+  --primary-color: #4361ee;
+  --primary-hover: #3a56d4;
+  --secondary-color: #7209b7;
+  --text-color: #333333;
+  --bg-color: #f8f9fa;
+  --card-bg: #ffffff;
+  --border-color: #e0e0e0;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --progress-bg: #e9ecef;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --border-radius: 8px;
+}
+
+/* Dark theme */
+[data-theme="dark"] {
+  --primary-color: #4361ee;
+  --primary-hover: #536dfe;
+  --secondary-color: #7209b7;
+  --text-color: #e0e0e0;
+  --bg-color: #121212;
+  --card-bg: #1e1e1e;
+  --border-color: #333333;
+  --success-color: #2ecc71;
+  --danger-color: #e74c3c;
+  --warning-color: #f39c12;
+  --progress-bg: #2a2a2a;
+  --shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header styling */
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 20px;
+}
+
+header h1 {
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+/* Theme switch styling - now inside settings modal */
+.theme-switch-wrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.theme-switch {
+  position: relative;
+  display: inline-block;
+  width: 48px;
+  height: 24px;
+  margin-right: 10px;
+}
+
+.theme-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  border-radius: 24px;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 18px;
+  width: 18px;
+  left: 3px;
+  bottom: 3px;
+  background-color: white;
+  border-radius: 50%;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: var(--primary-color);
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px var(--primary-color);
+}
+
+input:checked + .slider:before {
+  transform: translateX(24px);
+}
+
+/* Button styling */
+.btn {
+  padding: 10px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.1s ease;
+  text-decoration: none;
+  display: inline-block;
+  font-weight: 500;
+}
+
+.btn:hover {
+  background-color: var(--primary-hover);
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: translateY(0);
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+}
+
+.btn-danger:hover {
+  background-color: #c0392b;
+}
+
+.btn-success {
+  background-color: var(--success-color);
+}
+
+.btn-success:hover {
+  background-color: #27ae60;
+}
+
+/* Form controls */
+.form-control {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+/* Card styling */
+.card {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border-color);
+  transition: box-shadow 0.3s ease;
+}
+
+.card:hover {
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.card h2 {
+  margin-bottom: 16px;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.card h5 {
+  margin-bottom: 0;
+  font-weight: 500;
+}
+
+.card-header {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+
+.card-body {
+  padding: 8px 0;
+}
+
+/* Storage info styling */
+.storage-info {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+
+.storage-card h3 {
+  margin-bottom: 12px;
+}
+
+.progress-container {
+  height: 10px;
+  background-color: var(--progress-bg);
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+/* File upload area */
+.drag-area {
+  border: 2px dashed var(--border-color);
+  border-radius: var(--border-radius);
+  padding: 40px 20px;
+  text-align: center;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+  cursor: pointer;
+}
+
+.drag-area.active {
+  border-color: var(--primary-color);
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+.drag-area h3 {
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+
+.drag-area p {
+  margin-bottom: 15px;
+  color: var(--text-color);
+}
+
+/* File list styling */
+.file-list {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.file-list th, 
+.file-list td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.file-list th {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.file-list tr:hover {
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+/* Actions styling */
+.actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+/* Alert styling */
+#alerts {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+}
+
+.alert {
+  padding: 12px 16px;
+  margin-bottom: 10px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  color: white;
+  opacity: 1;
+  transition: opacity 0.5s ease;
+}
+
+.alert-success {
+  background-color: var(--success-color);
+}
+
+.alert-danger {
+  background-color: var(--danger-color);
+}
+
+.alert-warning {
+  background-color: var(--warning-color);
+}
+
+/* Modal styling */
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: var(--card-bg);
+  padding: 30px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  width: 100%;
+  max-width: 500px;
+  position: relative;
+  animation: modalFade 0.3s ease;
+}
+
+@keyframes modalFade {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content h2 {
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.close {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-size: 24px;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.close:hover {
+  color: var(--danger-color);
+}
+
+/* Utility classes */
+.hidden {
+  display: none;
+}
+
+.mb-0 {
+  margin-bottom: 0 !important;
+}
+
+.mb-4 {
+  margin-bottom: 16px !important;
+}
+
+
+
+/* Media queries for responsive design */
+@media (max-width: 768px) {
+  .storage-info {
+    grid-template-columns: 1fr;
+  }
+  
+  .actions {
+    flex-direction: column;
+  }
+  
+  .actions .btn {
+    width: 100%;
+    text-align: center;
+  }
+  
+  header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+  }
+  
+  header > div {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+  }
+  
+  header > div .btn {
+    flex: 1;
+  }
+}
+
+/* Fix modal display */
+.modal {
+  display: none;
+}
+
+.modal.active {
+  display: flex;
+}
+
+/* Settings section styles */
+.settings-section {
+  margin-bottom: 20px;
+}
+
+.settings-section h3 {
+  margin-bottom: 15px;
+  color: var(--primary-color);
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Local Cloud Storage</h1>
+            <div>
+                <button id="settingsBtn" class="btn">Settings</button>
+
+            </div>
+        </header>
+        
+        <div id="alerts"></div>
+        
+        <div class="storage-info">
+            <div class="card storage-card">
+                <h3>App Storage</h3>
+                <div class="progress-container">
+                    <div id="appStorageProgress" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="appStorageText">0 / 0</p>
+            </div>
+            
+            <div class="card storage-card">
+                <h3>System Storage</h3>
+                <div class="progress-container">
+                    <div id="systemStorageProgress" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="systemStorageText">0 / 0</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Upload Files</h2>
+            <div class="drag-area" id="dragArea">
+                <h3>Drag & Drop Files Here</h3>
+                <p>OR</p>
+                <button id="browseBtn" class="btn">Browse Files</button>
+                <input type="file" id="fileInput" multiple style="display: none;">
+            </div>
+            <div id="uploadProgress" class="hidden">
+                <h3>Uploading...</h3>
+                <div class="progress-container">
+                    <div id="fileUploadProgress" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="uploadStatus">0%</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Your Files</h2>
+            <input type="text" id="searchInput" placeholder="Search files..." style="width: 100%; margin-bottom: 10px;">
+            <div style="overflow-x: auto;">
+                <table class="file-list" id="fileList">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Size</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fileListBody">
+                        <!-- Files will be listed here -->
+                    </tbody>
+                </table>
+            </div>
+            <p id="noFilesMessage" class="hidden">No files found.</p>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Storage Settings</h2>
+            <div class="form-group">
+                <label for="storageLimit">Storage Limit (GB):</label>
+                <input type="number" id="storageLimit" min="1" step="0.1">
+            </div>
+            <button id="saveSettingsBtn" class="btn btn-success">Save Settings</button>
+        </div>
+    </div>
+    
+    <!-- Share File Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Share File</h2>
+            <p id="shareFileName"></p>
+            <div class="form-group">
+                <label for="shareValidity">Link Validity (hours):</label>
+                <input type="number" id="shareValidity" min="1" value="24">
+            </div>
+            <div class="form-group">
+                <label for="sharePassword">Password Protection (optional):</label>
+                <input type="password" id="sharePassword">
+            </div>
+            <button id="generateLinkBtn" class="btn btn-success">Generate Link</button>
+            <div id="shareLinkContainer" class="hidden">
+                <div class="form-group">
+                    <label for="shareLink">Shareable Link:</label>
+                    <div style="display: flex;">
+                        <input type="text" id="shareLink" readonly style="flex: 1;">
+                        <button id="copyLinkBtn" class="btn">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Create Dropzone Modal -->
+<div id="dropzoneModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Create Dropzone</h2>
+        <p>Create a dropzone where others can upload files to your storage</p>
+        <div class="form-group">
+            <label for="dropzoneValidity">Link Validity (hours):</label>
+            <input type="number" id="dropzoneValidity" min="1" value="24">
+        </div>
+        <div class="form-group">
+            <label for="dropzonePassword">Password Protection (optional):</label>
+            <input type="password" id="dropzonePassword">
+        </div>
+        <button id="generateDropzoneBtn" class="btn btn-success">Generate Dropzone Link</button>
+        <div id="dropzoneLinkContainer" class="hidden">
+            <div class="form-group">
+                <label for="dropzoneLink">Dropzone Link:</label>
+                <div style="display: flex;">
+                    <input type="text" id="dropzoneLink" readonly style="flex: 1;">
+                    <button id="copyDropzoneBtn" class="btn">Copy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+    <script>
+
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the settings modal content with the theme toggle
+    const settingsModalContent = document.querySelector('#settingsModal .modal-content');
+    
+    // Create theme toggle section at the top of settings
+    const themeSection = document.createElement('div');
+    themeSection.className = 'theme-switch-wrapper settings-section';
+    
+    const themeHeading = document.createElement('h3');
+    themeHeading.textContent = 'Appearance ';
+    themeSection.appendChild(themeHeading);
+    
+    const themeToggleWrapper = document.createElement('div');
+    themeToggleWrapper.style.display = 'flex';
+    themeToggleWrapper.style.alignItems = 'center';
+    
+    const themeSwitch = document.createElement('label');
+    themeSwitch.className = 'theme-switch';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'theme-switch';
+    
+    const slider = document.createElement('span');
+    slider.className = 'slider';
+    
+    const themeLabel = document.createElement('span');
+    themeLabel.style.marginLeft = '10px';
+    themeLabel.textContent = 'Dark Mode';
+    
+    themeSwitch.appendChild(checkbox);
+    themeSwitch.appendChild(slider);
+    themeToggleWrapper.appendChild(themeSwitch);
+    themeToggleWrapper.appendChild(themeLabel);
+    
+    themeSection.appendChild(themeToggleWrapper);
+    
+    // Insert the theme toggle before the first element in the settings modal
+    settingsModalContent.insertBefore(themeSection, settingsModalContent.firstChild.nextSibling);
+    
+    // Check for saved theme preference or use preferred color scheme
+    const currentTheme = localStorage.getItem('theme') || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    if (currentTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        checkbox.checked = true;
+    }
+    
+    // Theme switch functionality
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            themeLabel.textContent = 'Dark Mode';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            themeLabel.textContent = 'Light Mode';
+        }
+    });
+});
+        // DOM elements
+        const fileInput = document.getElementById('fileInput');
+        const dragArea = document.getElementById('dragArea');
+        const browseBtn = document.getElementById('browseBtn');
+        const fileListBody = document.getElementById('fileListBody');
+        const noFilesMessage = document.getElementById('noFilesMessage');
+        const uploadProgress = document.getElementById('uploadProgress');
+        const fileUploadProgress = document.getElementById('fileUploadProgress');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const searchInput = document.getElementById('searchInput');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const shareModal = document.getElementById('shareModal');
+        const appStorageProgress = document.getElementById('appStorageProgress');
+        const appStorageText = document.getElementById('appStorageText');
+        const systemStorageProgress = document.getElementById('systemStorageProgress');
+        const systemStorageText = document.getElementById('systemStorageText');
+        const storageLimit = document.getElementById('storageLimit');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        const shareFileName = document.getElementById('shareFileName');
+        const shareValidity = document.getElementById('shareValidity');
+        const sharePassword = document.getElementById('sharePassword');
+        const generateLinkBtn = document.getElementById('generateLinkBtn');
+        const shareLinkContainer = document.getElementById('shareLinkContainer');
+        const shareLink = document.getElementById('shareLink');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const alertsContainer = document.getElementById('alerts');
+        
+        // Close modal when clicking on X or outside the modal
+        document.querySelectorAll('.close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+        
+        window.addEventListener('click', (e) => {
+            document.querySelectorAll('.modal').forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Settings modal
+        settingsBtn.addEventListener('click', () => {
+            fetchStorageInfo().then(() => {
+                settingsModal.style.display = 'block';
+            });
+        });
+        
+
+        // File browse button
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File selection
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                uploadFiles(fileInput.files);
+            }
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragArea.addEventListener(eventName, () => {
+                dragArea.classList.add('active');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, () => {
+                dragArea.classList.remove('active');
+            });
+        });
+        
+        dragArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            uploadFiles(files);
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            const rows = fileListBody.querySelectorAll('tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const fileName = row.querySelector('td').textContent.toLowerCase();
+                if (fileName.includes(query)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            if (visibleCount === 0 && rows.length > 0) {
+                noFilesMessage.classList.remove('hidden');
+                noFilesMessage.textContent = 'No matching files found.';
+            } else {
+                noFilesMessage.classList.add('hidden');
+            }
+        });
+        
+        // Save settings
+        saveSettingsBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/update-storage-limit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        storage_limit_gb: parseFloat(storageLimit.value)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Storage limit updated successfully', 'success');
+                    settingsModal.style.display = 'none';
+                    fetchStorageInfo();
+                } else {
+                    showAlert(`Error: ${data.detail}`, 'danger');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            }
+        });
+        
+        // Copy share link
+        copyLinkBtn.addEventListener('click', () => {
+            shareLink.select();
+            document.execCommand('copy');
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyLinkBtn.textContent = 'Copy';
+            }, 2000);
+        });
+        
+        // Generate share link
+        generateLinkBtn.addEventListener('click', async () => {
+            const filename = shareFileName.textContent.split(': ')[1];
+            try {
+                const params = new URLSearchParams();
+                params.append('validity', shareValidity.value * 3600); // Convert hours to seconds
+                
+                if (sharePassword.value) {
+                    params.append('password', sharePassword.value);
+                }
+                
+                const response = await fetch(`/share/${filename}?${params.toString()}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const fullLink = window.location.origin + data.shareable_link;
+                    shareLink.value = fullLink;
+                    shareLinkContainer.classList.remove('hidden');
+                } else {
+                    showAlert(`Error: ${data.detail}`, 'danger');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            }
+        });
+        
+        // Upload files
+        async function uploadFiles(files) {
+            if (files.length === 0) return;
+            
+            const formData = new FormData();
+            
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+            
+            uploadProgress.classList.remove('hidden');
+            fileUploadProgress.style.width = '0%';
+            uploadStatus.textContent = '0%';
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload-multiple/', true);
+                
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        fileUploadProgress.style.width = `${percent}%`;
+                        uploadStatus.textContent = `${percent}% (${formatSize(e.loaded)} / ${formatSize(e.total)})`;
+                    }
+                };
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        showAlert(`Successfully uploaded ${response.uploaded_files.length} files`, 'success');
+                        fetchFiles();
+                        fetchStorageInfo();
+                    } else {
+                        let errorMessage = 'Upload failed';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMessage = response.detail || errorMessage;
+                        } catch (e) {}
+                        showAlert(`Error: ${errorMessage}`, 'danger');
+                    }
+                    uploadProgress.classList.add('hidden');
+                    fileInput.value = '';
+                };
+                
+                xhr.onerror = function() {
+                    showAlert('Upload failed. Network error.', 'danger');
+                    uploadProgress.classList.add('hidden');
+                    fileInput.value = '';
+                };
+                
+                xhr.send(formData);
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+                uploadProgress.classList.add('hidden');
+                fileInput.value = '';
+            }
+        }
+        
+        // Delete file
+        async function deleteFile(filename) {
+            if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/delete/${filename}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert(`File "${filename}" deleted successfully`, 'success');
+                    fetchFiles();
+                    fetchStorageInfo();
+                } else {
+                    showAlert(`Error: ${data.detail}`, 'danger');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            }
+        }
+        
+        // Share file
+        function openShareModal(filename) {
+            shareFileName.textContent = `File: ${filename}`;
+            shareValidity.value = 24;
+            sharePassword.value = '';
+            shareLinkContainer.classList.add('hidden');
+            shareModal.style.display = 'block';
+        }
+        
+        // Fetch files list
+        async function fetchFiles() {
+            try {
+                const response = await fetch('/list/');
+                const data = await response.json();
+                
+                fileListBody.innerHTML = '';
+                
+                if (data.files.length === 0) {
+                    noFilesMessage.classList.remove('hidden');
+                    noFilesMessage.textContent = 'No files uploaded yet.';
+                    return;
+                }
+                
+                noFilesMessage.classList.add('hidden');
+                
+                data.files.forEach(file => {
+                    const row = document.createElement('tr');
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = file.filename;
+                    
+                    const sizeCell = document.createElement('td');
+                    sizeCell.textContent = file.size_human;
+                    
+                    const actionsCell = document.createElement('td');
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'actions';
+                    
+                    // Download button
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = `/download/${file.filename}`;
+                    downloadBtn.className = 'btn';
+                    downloadBtn.textContent = 'Download';
+                    downloadBtn.download = file.filename;
+                    
+                    // Share button
+                    const shareBtn = document.createElement('button');
+                    shareBtn.className = 'btn';
+                    shareBtn.textContent = 'Share';
+                    shareBtn.onclick = () => openShareModal(file.filename);
+                    
+                    // Play button for media files
+                    const fileExt = file.filename.split('.').pop().toLowerCase();
+                    const mediaExts = ['mp4', 'webm', 'ogg', 'mp3', 'wav'];
+                    
+                    if (mediaExts.includes(fileExt)) {
+                        const playBtn = document.createElement('a');
+                        playBtn.href = `/player/${file.filename}`;
+                        playBtn.target = '_blank';
+                        playBtn.className = 'btn';
+                        playBtn.textContent = 'Play';
+                        actionsDiv.appendChild(playBtn);
+                    }
+                    
+                    // Delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.onclick = () => deleteFile(file.filename);
+                    
+                    actionsDiv.appendChild(downloadBtn);
+                    actionsDiv.appendChild(shareBtn);
+                    actionsDiv.appendChild(deleteBtn);
+                    actionsCell.appendChild(actionsDiv);
+                    
+                    row.appendChild(nameCell);
+                    row.appendChild(sizeCell);
+                    row.appendChild(actionsCell);
+                    
+                    fileListBody.appendChild(row);
+                });
+            } catch (error) {
+                showAlert(`Error fetching files: ${error.message}`, 'danger');
+            }
+        }
+        
+        // Fetch storage info
+        async function fetchStorageInfo() {
+            try {
+                const response = await fetch('/storage-info');
+                const data = await response.json();
+                
+                // App storage
+                const appPercent = (data.app_storage.used / data.app_storage.limit) * 100;
+                appStorageProgress.style.width = `${appPercent}%`;
+                appStorageText.textContent = `${data.app_storage.used_human} / ${data.app_storage.limit_human}`;
+                
+                // System storage
+                systemStorageProgress.style.width = `${data.system_storage.percent}%`;
+                systemStorageText.textContent = `${data.system_storage.used_human} / ${data.system_storage.total_human}`;
+                
+                // Update storage limit input
+                storageLimit.value = (data.app_storage.limit / (1024 * 1024 * 1024)).toFixed(1);
+                storageLimit.max = (data.max_possible_storage.bytes / (1024 * 1024 * 1024)).toFixed(1);
+            } catch (error) {
+                showAlert(`Error fetching storage info: ${error.message}`, 'danger');
+            }
+        }
+        
+        // Format size helper
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+        }
+        
+        // Show alert helper
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    alertsContainer.removeChild(alert);
+                }, 500);
+            }, 3000);
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            fetchFiles();
+            fetchStorageInfo();
+        });
+    </script>
+</body>
+</html>

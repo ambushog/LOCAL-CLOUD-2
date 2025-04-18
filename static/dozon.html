@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropzone Generator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+        }
+        input, button {
+            margin: 10px;
+            padding: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Generate Dropzone URL</h2>
+    <label for="validity">Validity (hours, optional):</label>
+    <input type="number" id="validity" placeholder="Enter validity in hours">
+    <br>
+    <label for="password">Password (optional):</label>
+    <input type="text" id="password" placeholder="Enter password">
+    <br>
+    <button onclick="generateDropzone()">Generate URL</button>
+    <p id="result"></p>
+
+    <script>
+async function generateDropzone() {
+    const response = await fetch("https://lcs.navaura.in/create-dropzone", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+            validity: 60, // example: 60 minutes
+            password: "secure123"
+        })
+    });
+
+    if (response.ok) {
+        const data = await response.json();
+        alert("Dropzone URL: " + data.dropzone_link);
+    } else {
+        alert("Failed to create dropzone");
+    }
+}
+
+    </script>
+</body>
+</html>

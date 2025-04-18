@@ -1,0 +1,1581 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local Cloud Storage</title>
+    <style>
+/* Android Mobile Cloud Storage App CSS Template */
+
+:root {
+  /* Material Design Colors - Light Theme */
+  --primary-color: #4361ee;
+  --primary-dark: #3a56d4;
+  --primary-light: #6b86ff;
+  --accent-color: #7209b7;
+  --text-primary: #212121;
+  --text-secondary: #757575;
+  --divider-color: #BDBDBD;
+  --background-color: #f5f5f5;
+  --surface-color: #ffffff;
+  --error-color: #B00020;
+  --success-color: #00C853;
+  --warning-color: #FF9800;
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  
+  /* Dimensions */
+  --status-bar-height: 24px;
+  --action-bar-height: 56px;
+  --bottom-nav-height: 56px;
+  --fab-size: 56px;
+  --elevation-1: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  --elevation-2: 0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23);
+  --elevation-3: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+  --border-radius: 4px;
+  --list-item-height: 72px;
+}
+
+/* Dark theme - Material Dark */
+[data-theme="dark"] {
+  --primary-color: #6b86ff;
+  --primary-dark: #4361ee;
+  --primary-light: #97b4ff;
+  --accent-color: #bb86fc;
+  --text-primary: #ffffff;
+  --text-secondary: #b0b0b0;
+  --divider-color: #424242;
+  --background-color: #121212;
+  --surface-color: #1e1e1e;
+  --error-color: #CF6679;
+  --shadow-color: rgba(0, 0, 0, 0.25);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-primary);
+  height: 100%;
+  width: 100%;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  padding-top: calc(var(--status-bar-height) + var(--action-bar-height));
+  padding-bottom: var(--bottom-nav-height);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* Status Bar - Android Style */
+.status-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--status-bar-height);
+  background-color: var(--primary-dark);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.status-bar-icons {
+  display: flex;
+  gap: 8px;
+  padding-right: 12px;
+  color: white;
+  font-size: 12px;
+}
+
+/* Action Bar - Android Style */
+.action-bar {
+  position: fixed;
+  top: var(--status-bar-height);
+  left: 0;
+  right: 0;
+  height: var(--action-bar-height);
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  z-index: 999;
+  box-shadow: var(--elevation-1);
+}
+
+.action-bar-title {
+  font-size: 20px;
+  font-weight: 500;
+  flex: 1;
+}
+
+.action-bar-icons {
+  display: flex;
+  gap: 16px;
+}
+
+.action-icon {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 24px;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.action-icon:active {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Bottom Navigation - Android Style */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--bottom-nav-height);
+  background-color: var(--surface-color);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 900;
+  box-shadow: var(--elevation-1);
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  height: 100%;
+  color: var(--text-secondary);
+  text-decoration: none;
+  font-size: 12px;
+  padding: 8px 0;
+}
+
+.bottom-nav-item.active {
+  color: var(--primary-color);
+}
+
+.bottom-nav-icon {
+  font-size: 24px;
+  margin-bottom: 2px;
+}
+
+/* Material FAB */
+.fab {
+  position: fixed;
+  right: 16px;
+  bottom: calc(var(--bottom-nav-height) + 16px);
+  width: var(--fab-size);
+  height: var(--fab-size);
+  border-radius: 28px;
+  background-color: var(--accent-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--elevation-2);
+  z-index: 890;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.fab:active {
+  background-color: var(--primary-dark);
+  box-shadow: var(--elevation-3);
+}
+
+.fab-icon {
+  font-size: 24px;
+}
+
+/* Content Container */
+.container {
+  padding: 16px;
+}
+
+/* Material Cards */
+.card {
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  box-shadow: var(--elevation-1);
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--divider-color);
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.card-content {
+  padding: 16px;
+}
+
+/* Storage Progress */
+.storage-card {
+  margin-bottom: 16px;
+}
+
+.progress-container {
+  height: 4px;
+  background-color: var(--divider-color);
+  margin: 12px 0;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.progress-bar {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease;
+}
+
+.storage-details {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+/* File Upload Button - Replace Drag n Drop */
+.upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background-color: var(--surface-color);
+  border: 1px solid var(--divider-color);
+  border-radius: var(--border-radius);
+  padding: 16px;
+  width: 100%;
+  margin-bottom: 16px;
+  color: var(--primary-color);
+  text-align: center;
+  cursor: pointer;
+}
+
+.upload-button:active {
+  background-color: rgba(67, 97, 238, 0.05);
+}
+
+.upload-icon {
+  font-size: 24px;
+}
+
+.upload-text {
+  font-weight: 500;
+}
+
+/* Material List Items */
+.list {
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--elevation-1);
+}
+
+.list-item {
+  display: flex;
+  padding: 16px;
+  min-height: var(--list-item-height);
+  border-bottom: 1px solid var(--divider-color);
+  position: relative;
+  transition: background-color 0.2s ease;
+}
+
+.list-item:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.list-item:last-child {
+  border-bottom: none;
+}
+
+.item-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 4px;
+  background-color: rgba(67, 97, 238, 0.1);
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 16px;
+}
+
+.item-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.item-title {
+  font-size: 16px;
+  color: var(--text-primary);
+  margin-bottom: 4px;
+}
+
+.item-secondary {
+  font-size: 14px;
+  color: var(--text-secondary);
+}
+
+.item-actions {
+  display: flex;
+  align-items: center;
+}
+
+.item-action {
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.item-action:active {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Android Buttons */
+.btn {
+  padding: 0 16px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+.btn-contained {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  box-shadow: var(--elevation-1);
+}
+
+.btn-contained:active {
+  background-color: var(--primary-dark);
+}
+
+.btn-outlined {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 1px solid var(--primary-color);
+}
+
+.btn-outlined:active {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.btn-text {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: none;
+}
+
+.btn-text:active {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+/* Form Controls - Material Style */
+.text-field {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.text-field-input {
+  width: 100%;
+  height: 56px;
+  padding: 20px 16px 6px;
+  font-size: 16px;
+  border: none;
+  border-bottom: 1px solid var(--divider-color);
+  background-color: rgba(0, 0, 0, 0.04);
+  border-radius: 4px 4px 0 0;
+  color: var(--text-primary);
+  transition: border-color 0.2s ease;
+}
+
+.text-field-label {
+  position: absolute;
+  left: 16px;
+  top: 18px;
+  font-size: 16px;
+  color: var(--text-secondary);
+  transition: all 0.2s ease;
+  pointer-events: none;
+}
+
+.text-field-input:focus {
+  outline: none;
+  border-bottom: 2px solid var(--primary-color);
+}
+
+.text-field-input:focus + .text-field-label,
+.text-field-input:not(:placeholder-shown) + .text-field-label {
+  top: 8px;
+  font-size: 12px;
+  color: var(--primary-color);
+}
+
+/* Material Bottom Sheet (Modal) */
+.bottom-sheet {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+  padding: 0;
+}
+
+.bottom-sheet.active {
+  display: block;
+}
+
+.sheet-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: var(--surface-color);
+  border-radius: 8px 8px 0 0;
+  padding: 16px 16px 24px;
+  transform: translateY(100%);
+  transition: transform 0.3s ease;
+}
+
+.bottom-sheet.active .sheet-content {
+  transform: translateY(0);
+}
+
+.sheet-drag-handle {
+  width: 40px;
+  height: 4px;
+  background-color: var(--divider-color);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.sheet-title {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+/* Material Snackbar */
+.snackbar {
+  position: fixed;
+  bottom: calc(var(--bottom-nav-height) + 8px);
+  left: 8px;
+  right: 8px;
+  background-color: #323232;
+  color: white;
+  padding: 14px 16px;
+  border-radius: 4px;
+  box-shadow: var(--elevation-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 1100;
+  transform: translateY(100px);
+  opacity: 0;
+  transition: transform 0.25s ease, opacity 0.25s ease;
+}
+
+.snackbar.active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.snackbar-text {
+  font-size: 14px;
+  flex: 1;
+}
+
+.snackbar-action {
+  text-transform: uppercase;
+  color: var(--primary-light);
+  font-weight: 500;
+  margin-left: 24px;
+  font-size: 14px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* File List with Image Thumbnails */
+.file-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.file-card {
+  background-color: var(--surface-color);
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--elevation-1);
+}
+
+.file-thumbnail {
+  width: 100%;
+  height: 100px;
+  background-color: rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+}
+
+.file-info {
+  padding: 8px;
+}
+
+.file-name {
+  font-size: 14px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 4px;
+}
+
+.file-meta {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+/* Context menu (long press) */
+.context-menu {
+  position: fixed;
+  background-color: var(--surface-color);
+  box-shadow: var(--elevation-3);
+  border-radius: 8px;
+  z-index: 1100;
+  overflow: hidden;
+  transform: scale(0.8);
+  opacity: 0;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+  transform-origin: top left;
+  display: none;
+}
+
+.context-menu.active {
+  transform: scale(1);
+  opacity: 1;
+  display: block;
+}
+
+.context-menu-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  min-width: 180px;
+}
+
+.context-menu-item:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.context-menu-icon {
+  color: var(--text-secondary);
+  font-size: 18px;
+  width: 24px;
+  text-align: center;
+}
+
+.context-menu-text {
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+/* Tabs - Material Style */
+.tab-bar {
+  display: flex;
+  background-color: var(--primary-color);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.tab-bar::-webkit-scrollbar {
+  display: none;
+}
+
+.tab {
+  padding: 0 16px;
+  height: 48px;
+  min-width: 90px;
+  color: rgba(255, 255, 255, 0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-transform: uppercase;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: color 0.2s ease;
+  border-bottom: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+.tab.active {
+  color: white;
+  border-bottom-color: white;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 32px 16px;
+  text-align: center;
+}
+
+.empty-icon {
+  font-size: 64px;
+  color: var(--divider-color);
+  margin-bottom: 16px;
+}
+
+.empty-title {
+  font-size: 18px;
+  color: var(--text-primary);
+  margin-bottom: 8px;
+  font-weight: 500;
+}
+
+.empty-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  max-width: 300px;
+}
+
+/* Loading Indicator */
+.circular-progress {
+  width: 36px;
+  height: 36px;
+  border: 3px solid rgba(67, 97, 238, 0.2);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.loading-container {
+  background-color: var(--surface-color);
+  padding: 24px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 200px;
+}
+
+.loading-text {
+  margin-top: 16px;
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+/* File Actions Bottom Sheet */
+.action-list {
+  list-style: none;
+}
+
+.action-item {
+  display: flex;
+  align-items: center;
+  padding: 16px;
+  gap: 16px;
+}
+
+.action-item:active {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.action-icon {
+  width: 24px;
+  height: 24px;
+  color: var(--primary-color);
+}
+
+.action-label {
+  font-size: 16px;
+  color: var(--text-primary);
+}
+
+/* Selection Mode */
+.selection-mode .action-bar {
+  background-color: var(--accent-color);
+}
+
+.selection-mode .list-item.selected {
+  background-color: rgba(67, 97, 238, 0.1);
+}
+
+.selection-checkbox {
+  margin-right: 16px;
+  width: 24px;
+  height: 24px;
+  border-radius: 12px;
+  border: 2px solid var(--divider-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected .selection-checkbox {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+/* Ripple Effect */
+.ripple {
+  position: relative;
+  overflow: hidden;
+}
+
+.ripple:after {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  background-image: radial-gradient(circle, #000 10%, transparent 10.01%);
+  background-repeat: no-repeat;
+  background-position: 50%;
+  transform: scale(10, 10);
+  opacity: 0;
+  transition: transform .5s, opacity 1s;
+}
+
+.ripple:active:after {
+  transform: scale(0, 0);
+  opacity: .2;
+  transition: 0s;
+}
+
+/* File Search - Material Style */
+.search-bar {
+  position: relative;
+  margin-bottom: 16px;
+  padding: 0 8px;
+}
+
+.search-input {
+  width: 100%;
+  height: 48px;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: none;
+  border-radius: 4px;
+  color: white;
+  padding: 0 48px;
+  font-size: 16px;
+}
+
+.search-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 24px;
+}
+
+.search-clear {
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: white;
+  font-size: 24px;
+  background: none;
+  border: none;
+  display: none;
+}
+
+.search-input:not(:placeholder-shown) ~ .search-clear {
+  display: block;
+}
+
+/* File filter chips */
+.chip-container {
+  display: flex;
+  gap: 8px;
+  padding: 8px 16px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  margin-bottom: 16px;
+}
+
+.chip-container::-webkit-scrollbar {
+  display: none;
+}
+
+.chip {
+  padding: 0 12px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: var(--text-primary);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.chip.active {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+/* Upload Progress */
+.upload-progress-card {
+  padding: 16px;
+}
+
+.upload-progress-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.upload-title {
+  font-weight: 500;
+}
+
+.upload-percentage {
+  color: var(--primary-color);
+}
+
+.upload-details {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-top: 8px;
+}
+
+/* File Preview */
+.preview-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: var(--background-color);
+  z-index: 1500;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-header {
+  height: var(--action-bar-height);
+  background-color: var(--primary-color);
+  color: white;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.preview-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+.preview-actions {
+  display: flex;
+  justify-content: space-around;
+  padding: 16px;
+  background-color: var(--surface-color);
+  border-top: 1px solid var(--divider-color);
+}
+
+.preview-action {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-secondary);
+  gap: 4px;
+}
+
+.preview-action-icon {
+  font-size: 24px;
+}
+
+.preview-action-text {
+  font-size: 12px;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Local Cloud Storage</h1>
+            <div>
+                <button id="settingsBtn" class="btn">Settings</button>
+
+            </div>
+        </header>
+        
+        <div id="alerts"></div>
+        
+        <div class="storage-info">
+            <div class="card storage-card">
+                <h3>App Storage</h3>
+                <div class="progress-container">
+                    <div id="appStorageProgress" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="appStorageText">0 / 0</p>
+            </div>
+            
+            <div class="card storage-card">
+                <h3>System Storage</h3>
+                <div class="progress-container">
+                    <div id="systemStorageProgress" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="systemStorageText">0 / 0</p>
+            </div>
+        </div>
+        
+        <div class="card">
+            <h2>Upload Files</h2>
+            <div class="drag-area" id="dragArea">
+                <h3>Drag & Drop Files Here</h3>
+                <p>OR</p>
+                <button id="browseBtn" class="btn">Browse Files</button>
+                <input type="file" id="fileInput" multiple style="display: none;">
+            </div>
+            <div id="uploadProgress" class="hidden">
+                <h3>Uploading...</h3>
+                <div class="progress-container">
+                    <div id="fileUploadProgress" class="progress-bar" style="width: 0%"></div>
+                </div>
+                <p id="uploadStatus">0%</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>Your Files</h2>
+            <input type="text" id="searchInput" placeholder="Search files..." style="width: 100%; margin-bottom: 10px;">
+            <div style="overflow-x: auto;">
+                <table class="file-list" id="fileList">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Size</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="fileListBody">
+                        <!-- Files will be listed here -->
+                    </tbody>
+                </table>
+            </div>
+            <p id="noFilesMessage" class="hidden">No files found.</p>
+        </div>
+    </div>
+    
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Storage Settings</h2>
+            <div class="form-group">
+                <label for="storageLimit">Storage Limit (GB):</label>
+                <input type="number" id="storageLimit" min="1" step="0.1">
+            </div>
+            <button id="saveSettingsBtn" class="btn btn-success">Save Settings</button>
+        </div>
+    </div>
+    
+    <!-- Share File Modal -->
+    <div id="shareModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Share File</h2>
+            <p id="shareFileName"></p>
+            <div class="form-group">
+                <label for="shareValidity">Link Validity (hours):</label>
+                <input type="number" id="shareValidity" min="1" value="24">
+            </div>
+            <div class="form-group">
+                <label for="sharePassword">Password Protection (optional):</label>
+                <input type="password" id="sharePassword">
+            </div>
+            <button id="generateLinkBtn" class="btn btn-success">Generate Link</button>
+            <div id="shareLinkContainer" class="hidden">
+                <div class="form-group">
+                    <label for="shareLink">Shareable Link:</label>
+                    <div style="display: flex;">
+                        <input type="text" id="shareLink" readonly style="flex: 1;">
+                        <button id="copyLinkBtn" class="btn">Copy</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+// Remove the existing theme toggle creation code from the DOMContentLoaded event
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Initialize the settings modal content with the theme toggle
+    const settingsModalContent = document.querySelector('#settingsModal .modal-content');
+    
+    // Create theme toggle section at the top of settings
+    const themeSection = document.createElement('div');
+    themeSection.className = 'theme-switch-wrapper settings-section';
+    
+    const themeHeading = document.createElement('h3');
+    themeHeading.textContent = 'Appearance ';
+    themeSection.appendChild(themeHeading);
+    
+    const themeToggleWrapper = document.createElement('div');
+    themeToggleWrapper.style.display = 'flex';
+    themeToggleWrapper.style.alignItems = 'center';
+    
+    const themeSwitch = document.createElement('label');
+    themeSwitch.className = 'theme-switch';
+    
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = 'theme-switch';
+    
+    const slider = document.createElement('span');
+    slider.className = 'slider';
+    
+    const themeLabel = document.createElement('span');
+    themeLabel.style.marginLeft = '10px';
+    themeLabel.textContent = 'Dark Mode';
+    
+    themeSwitch.appendChild(checkbox);
+    themeSwitch.appendChild(slider);
+    themeToggleWrapper.appendChild(themeSwitch);
+    themeToggleWrapper.appendChild(themeLabel);
+    
+    themeSection.appendChild(themeToggleWrapper);
+    
+    // Insert the theme toggle before the first element in the settings modal
+    settingsModalContent.insertBefore(themeSection, settingsModalContent.firstChild.nextSibling);
+    
+    // Check for saved theme preference or use preferred color scheme
+    const currentTheme = localStorage.getItem('theme') || 
+        (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    
+    if (currentTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        checkbox.checked = true;
+    }
+    
+    // Theme switch functionality
+    checkbox.addEventListener('change', function() {
+        if (this.checked) {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            localStorage.setItem('theme', 'dark');
+            themeLabel.textContent = 'Dark Mode';
+        } else {
+            document.documentElement.setAttribute('data-theme', 'light');
+            localStorage.setItem('theme', 'light');
+            themeLabel.textContent = 'Light Mode';
+        }
+    });
+});
+        // DOM elements
+        const fileInput = document.getElementById('fileInput');
+        const dragArea = document.getElementById('dragArea');
+        const browseBtn = document.getElementById('browseBtn');
+        const fileListBody = document.getElementById('fileListBody');
+        const noFilesMessage = document.getElementById('noFilesMessage');
+        const uploadProgress = document.getElementById('uploadProgress');
+        const fileUploadProgress = document.getElementById('fileUploadProgress');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const searchInput = document.getElementById('searchInput');
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsModal = document.getElementById('settingsModal');
+        const shareModal = document.getElementById('shareModal');
+        const appStorageProgress = document.getElementById('appStorageProgress');
+        const appStorageText = document.getElementById('appStorageText');
+        const systemStorageProgress = document.getElementById('systemStorageProgress');
+        const systemStorageText = document.getElementById('systemStorageText');
+        const storageLimit = document.getElementById('storageLimit');
+        const saveSettingsBtn = document.getElementById('saveSettingsBtn');
+        const shareFileName = document.getElementById('shareFileName');
+        const shareValidity = document.getElementById('shareValidity');
+        const sharePassword = document.getElementById('sharePassword');
+        const generateLinkBtn = document.getElementById('generateLinkBtn');
+        const shareLinkContainer = document.getElementById('shareLinkContainer');
+        const shareLink = document.getElementById('shareLink');
+        const copyLinkBtn = document.getElementById('copyLinkBtn');
+        const alertsContainer = document.getElementById('alerts');
+        
+        // Close modal when clicking on X or outside the modal
+        document.querySelectorAll('.close').forEach(closeBtn => {
+            closeBtn.addEventListener('click', () => {
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.style.display = 'none';
+                });
+            });
+        });
+        
+        window.addEventListener('click', (e) => {
+            document.querySelectorAll('.modal').forEach(modal => {
+                if (e.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        });
+        
+        // Settings modal
+        settingsBtn.addEventListener('click', () => {
+            fetchStorageInfo().then(() => {
+                settingsModal.style.display = 'block';
+            });
+        });
+        
+
+        // File browse button
+        browseBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+        
+        // File selection
+        fileInput.addEventListener('change', () => {
+            if (fileInput.files.length > 0) {
+                uploadFiles(fileInput.files);
+            }
+        });
+        
+        // Drag and drop functionality
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, preventDefaults, false);
+        });
+        
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dragArea.addEventListener(eventName, () => {
+                dragArea.classList.add('active');
+            });
+        });
+        
+        ['dragleave', 'drop'].forEach(eventName => {
+            dragArea.addEventListener(eventName, () => {
+                dragArea.classList.remove('active');
+            });
+        });
+        
+        dragArea.addEventListener('drop', (e) => {
+            const dt = e.dataTransfer;
+            const files = dt.files;
+            uploadFiles(files);
+        });
+        
+        // Search functionality
+        searchInput.addEventListener('input', () => {
+            const query = searchInput.value.toLowerCase();
+            const rows = fileListBody.querySelectorAll('tr');
+            
+            let visibleCount = 0;
+            rows.forEach(row => {
+                const fileName = row.querySelector('td').textContent.toLowerCase();
+                if (fileName.includes(query)) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            if (visibleCount === 0 && rows.length > 0) {
+                noFilesMessage.classList.remove('hidden');
+                noFilesMessage.textContent = 'No matching files found.';
+            } else {
+                noFilesMessage.classList.add('hidden');
+            }
+        });
+        
+        // Save settings
+        saveSettingsBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/update-storage-limit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        storage_limit_gb: parseFloat(storageLimit.value)
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert('Storage limit updated successfully', 'success');
+                    settingsModal.style.display = 'none';
+                    fetchStorageInfo();
+                } else {
+                    showAlert(`Error: ${data.detail}`, 'danger');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            }
+        });
+        
+        // Copy share link
+        copyLinkBtn.addEventListener('click', () => {
+            shareLink.select();
+            document.execCommand('copy');
+            copyLinkBtn.textContent = 'Copied!';
+            setTimeout(() => {
+                copyLinkBtn.textContent = 'Copy';
+            }, 2000);
+        });
+        
+        // Generate share link
+        generateLinkBtn.addEventListener('click', async () => {
+            const filename = shareFileName.textContent.split(': ')[1];
+            try {
+                const params = new URLSearchParams();
+                params.append('validity', shareValidity.value * 3600); // Convert hours to seconds
+                
+                if (sharePassword.value) {
+                    params.append('password', sharePassword.value);
+                }
+                
+                const response = await fetch(`/share/${filename}?${params.toString()}`, {
+                    method: 'POST'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    const fullLink = window.location.origin + data.shareable_link;
+                    shareLink.value = fullLink;
+                    shareLinkContainer.classList.remove('hidden');
+                } else {
+                    showAlert(`Error: ${data.detail}`, 'danger');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            }
+        });
+        
+        // Upload files
+        async function uploadFiles(files) {
+            if (files.length === 0) return;
+            
+            const formData = new FormData();
+            
+            for (let i = 0; i < files.length; i++) {
+                formData.append('files', files[i]);
+            }
+            
+            uploadProgress.classList.remove('hidden');
+            fileUploadProgress.style.width = '0%';
+            uploadStatus.textContent = '0%';
+            
+            try {
+                const xhr = new XMLHttpRequest();
+                xhr.open('POST', '/upload-multiple/', true);
+                
+                xhr.upload.onprogress = (e) => {
+                    if (e.lengthComputable) {
+                        const percent = Math.round((e.loaded / e.total) * 100);
+                        fileUploadProgress.style.width = `${percent}%`;
+                        uploadStatus.textContent = `${percent}% (${formatSize(e.loaded)} / ${formatSize(e.total)})`;
+                    }
+                };
+                
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        showAlert(`Successfully uploaded ${response.uploaded_files.length} files`, 'success');
+                        fetchFiles();
+                        fetchStorageInfo();
+                    } else {
+                        let errorMessage = 'Upload failed';
+                        try {
+                            const response = JSON.parse(xhr.responseText);
+                            errorMessage = response.detail || errorMessage;
+                        } catch (e) {}
+                        showAlert(`Error: ${errorMessage}`, 'danger');
+                    }
+                    uploadProgress.classList.add('hidden');
+                    fileInput.value = '';
+                };
+                
+                xhr.onerror = function() {
+                    showAlert('Upload failed. Network error.', 'danger');
+                    uploadProgress.classList.add('hidden');
+                    fileInput.value = '';
+                };
+                
+                xhr.send(formData);
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+                uploadProgress.classList.add('hidden');
+                fileInput.value = '';
+            }
+        }
+        
+        // Delete file
+        async function deleteFile(filename) {
+            if (!confirm(`Are you sure you want to delete "${filename}"?`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/delete/${filename}`, {
+                    method: 'DELETE'
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    showAlert(`File "${filename}" deleted successfully`, 'success');
+                    fetchFiles();
+                    fetchStorageInfo();
+                } else {
+                    showAlert(`Error: ${data.detail}`, 'danger');
+                }
+            } catch (error) {
+                showAlert(`Error: ${error.message}`, 'danger');
+            }
+        }
+        
+        // Share file
+        function openShareModal(filename) {
+            shareFileName.textContent = `File: ${filename}`;
+            shareValidity.value = 24;
+            sharePassword.value = '';
+            shareLinkContainer.classList.add('hidden');
+            shareModal.style.display = 'block';
+        }
+        
+        // Fetch files list
+        async function fetchFiles() {
+            try {
+                const response = await fetch('/list/');
+                const data = await response.json();
+                
+                fileListBody.innerHTML = '';
+                
+                if (data.files.length === 0) {
+                    noFilesMessage.classList.remove('hidden');
+                    noFilesMessage.textContent = 'No files uploaded yet.';
+                    return;
+                }
+                
+                noFilesMessage.classList.add('hidden');
+                
+                data.files.forEach(file => {
+                    const row = document.createElement('tr');
+                    
+                    const nameCell = document.createElement('td');
+                    nameCell.textContent = file.filename;
+                    
+                    const sizeCell = document.createElement('td');
+                    sizeCell.textContent = file.size_human;
+                    
+                    const actionsCell = document.createElement('td');
+                    const actionsDiv = document.createElement('div');
+                    actionsDiv.className = 'actions';
+                    
+                    // Download button
+                    const downloadBtn = document.createElement('a');
+                    downloadBtn.href = `/download/${file.filename}`;
+                    downloadBtn.className = 'btn';
+                    downloadBtn.textContent = 'Download';
+                    downloadBtn.download = file.filename;
+                    
+                    // Share button
+                    const shareBtn = document.createElement('button');
+                    shareBtn.className = 'btn';
+                    shareBtn.textContent = 'Share';
+                    shareBtn.onclick = () => openShareModal(file.filename);
+                    
+                    // Play button for media files
+                    const fileExt = file.filename.split('.').pop().toLowerCase();
+                    const mediaExts = ['mp4', 'webm', 'ogg', 'mp3', 'wav'];
+                    
+                    if (mediaExts.includes(fileExt)) {
+                        const playBtn = document.createElement('a');
+                        playBtn.href = `/player/${file.filename}`;
+                        playBtn.target = '_blank';
+                        playBtn.className = 'btn';
+                        playBtn.textContent = 'Play';
+                        actionsDiv.appendChild(playBtn);
+                    }
+                    
+                    // Delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.className = 'btn btn-danger';
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.onclick = () => deleteFile(file.filename);
+                    
+                    actionsDiv.appendChild(downloadBtn);
+                    actionsDiv.appendChild(shareBtn);
+                    actionsDiv.appendChild(deleteBtn);
+                    actionsCell.appendChild(actionsDiv);
+                    
+                    row.appendChild(nameCell);
+                    row.appendChild(sizeCell);
+                    row.appendChild(actionsCell);
+                    
+                    fileListBody.appendChild(row);
+                });
+            } catch (error) {
+                showAlert(`Error fetching files: ${error.message}`, 'danger');
+            }
+        }
+        
+        // Fetch storage info
+        async function fetchStorageInfo() {
+            try {
+                const response = await fetch('/storage-info');
+                const data = await response.json();
+                
+                // App storage
+                const appPercent = (data.app_storage.used / data.app_storage.limit) * 100;
+                appStorageProgress.style.width = `${appPercent}%`;
+                appStorageText.textContent = `${data.app_storage.used_human} / ${data.app_storage.limit_human}`;
+                
+                // System storage
+                systemStorageProgress.style.width = `${data.system_storage.percent}%`;
+                systemStorageText.textContent = `${data.system_storage.used_human} / ${data.system_storage.total_human}`;
+                
+                // Update storage limit input
+                storageLimit.value = (data.app_storage.limit / (1024 * 1024 * 1024)).toFixed(1);
+                storageLimit.max = (data.max_possible_storage.bytes / (1024 * 1024 * 1024)).toFixed(1);
+            } catch (error) {
+                showAlert(`Error fetching storage info: ${error.message}`, 'danger');
+            }
+        }
+        
+        // Format size helper
+        function formatSize(bytes) {
+            if (bytes === 0) return '0 B';
+            const sizes = ['B', 'KB', 'MB', 'GB', 'TB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(1024));
+            return `${(bytes / Math.pow(1024, i)).toFixed(2)} ${sizes[i]}`;
+        }
+        
+        // Show alert helper
+        function showAlert(message, type) {
+            const alert = document.createElement('div');
+            alert.className = `alert alert-${type}`;
+            alert.textContent = message;
+            
+            alertsContainer.appendChild(alert);
+            
+            setTimeout(() => {
+                alert.style.opacity = '0';
+                alert.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    alertsContainer.removeChild(alert);
+                }, 500);
+            }, 3000);
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            fetchFiles();
+            fetchStorageInfo();
+        });
+    </script>
+</body>
+</html>
